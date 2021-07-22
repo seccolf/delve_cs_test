@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - galsim
-  - ngmix==2
+  - ngmix=2
   - joblib
   - pyyaml
   - click
