@@ -13,5 +13,3 @@ conda env create --file delve_shear.yml #this is actually not working for some r
 ## notes
 
 Specific shear notes: https://hackmd.io/vphTNUhTQC-peuaB9JS2nw?edit 
-
-DELVE cosmic shear notes: https://docs.google.com/document/d/1nPgItVX05YhZzTbC91azigE7T-Y23MMHbKbHV9-4txY/edit
