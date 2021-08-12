@@ -10,10 +10,12 @@ from ngmix import ObsList, MultiBandObsList
 from ngmix.gexceptions import GMixRangeError
 
 from ngmix.medsreaders import MultiBandNGMixMEDS, NGMixMEDS
-from .metacal import MetacalFitter
-from .ngmix_compat import NGMIX_V2
-from eastlake.step import Step
-from eastlake.utils import safe_mkdir
+#from .metacal import MetacalFitter
+from metacal import MetacalFitter
+#from .ngmix_compat import NGMIX_V2
+from ngmix_compat import NGMIX_V2
+#from eastlake.step import Step
+#from eastlake.utils import safe_mkdir
 
 import pdb
 
@@ -79,80 +81,6 @@ CONFIG = {
         }
     },
 }
-
-
-class NewishMetcalRunner(Step):
-    """Run a newer metacal.
-
-    Config Params
-    -------------
-    bands : list of str, optional
-        A list of bands to use. Defaults to `["r", "i", "z"]`.
-    """
-    def __init__(self, config, base_dir, name="newish-metacal", logger=None,
-                 verbosity=0, log_file=None):
-        super(NewishMetcalRunner, self).__init__(
-            config, base_dir, name=name, logger=logger, verbosity=verbosity,
-            log_file=log_file)
-
-        # bands to use
-        self.bands = self.config.get("bands", ["r", "i", "z"])
-
-    def clear_stash(self, stash):
-        pass
-
-    def execute(self, stash, new_params=None):
-        self.clear_stash(stash)
-
-        base_output_dir = os.path.join(self.base_dir, "newish-metacal")
-        safe_mkdir(base_output_dir)
-
-        for tilename in stash["tilenames"]:
-
-            # meds files
-            built_meds_files = stash.get_filepaths("meds_files", tilename)
-
-            meds_files_to_use = []
-            for band in self.bands:
-                sstr = "%s_%s" % (tilename, band)
-                if not any(sstr in f for f in built_meds_files):
-                    raise RuntimeError(
-                        "could not find meds file for tilename %s band %s" % (
-                            tilename, band))
-                else:
-                    for f in built_meds_files:
-                        if sstr in f:
-                            meds_files_to_use.append(f)
-                            break
-            assert len(meds_files_to_use) == len(self.bands), (
-                "We did not find the right number of meds files!")
-
-            # record what bands we're running in the stash
-            stash["newish_metacal_bands"] = self.bands
-
-            try:
-                staged_meds_files = []
-                tmpdir = os.environ['TMPDIR']
-                for fname in meds_files_to_use:
-                    os.system("cp %s %s/." % (fname, tmpdir))
-                    staged_meds_files.append(
-                        os.path.join(tmpdir, os.path.basename(fname))
-                    )
-                # FIXME hard coded seed
-                output = _run_metacal(staged_meds_files, 42)
-            finally:
-                for fname in staged_meds_files:
-                    os.system("rm -f %s" % fname)
-
-            output_dir = os.path.join(base_output_dir, tilename)
-            safe_mkdir(output_dir)
-
-            fname = os.path.join(output_dir, "%s_newish_metacal.fits" % tilename)
-            fitsio.write(fname, output, clobber=True)
-
-            stash.set_filepaths("newish_metacal_output", fname, tilename)
-
-        return 0, stash
 
 
 def _run_metacal(meds_files, seed):
