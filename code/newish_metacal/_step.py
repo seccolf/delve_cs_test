@@ -15,6 +15,8 @@ from .ngmix_compat import NGMIX_V2
 from eastlake.step import Step
 from eastlake.utils import safe_mkdir
 
+import pdb
+
 logger = logging.getLogger(__name__)
 
 # always and forever
@@ -164,9 +166,11 @@ def _run_metacal(meds_files, seed):
         The seed for the global RNG.
     """
     with NGMixMEDS(meds_files[0]) as m:
-        cat = m.get_cat()
+        cat = m.get_cat() #LS: gets all the relevant info as a recarray (eg cat['ra'] contains the arrays of all cutouts)
     logger.info(' meds files %s', meds_files)
 
+    #LS: the stuff below seems to be setting up parallel execution and nothing else.
+    #a 'chunk' is apparently a subset of the objects in the meds file
     n_cpus = joblib.externals.loky.cpu_count()
     n_chunks = max(n_cpus, 60)
     n_obj_per_chunk = int(cat.size / n_chunks)
@@ -182,7 +186,7 @@ def _run_metacal(meds_files, seed):
     for chunk in range(n_chunks):
         start = chunk * n_obj_per_chunk
         end = min(start + n_obj_per_chunk, cat.size)
-        jobs.append(joblib.delayed(_run_mcal_one_chunk)(
+        jobs.append(joblib.delayed(_run_mcal_one_chunk)( ###LS: seems like the function being run is _run_mcal_one_chunk
             meds_files, start, end, seeds[chunk]))
 
     with joblib.Parallel(
@@ -194,14 +198,14 @@ def _run_metacal(meds_files, seed):
     assert not all([o is None for o in outputs]), (
         "All metacal fits failed!")
 
-    output = eu.numpy_util.combine_arrlist(
+    output = eu.numpy_util.combine_arrlist( #LS: no idea what's going on here, but seems to be simply organizing the outputs
         [o for o in outputs if o is not None])
     logger.info(' %d of %d metacal fits worked!', output.size, cat.size)
 
     return output
 
 
-def _run_mcal_one_chunk(meds_files, start, end, seed):
+def _run_mcal_one_chunk(meds_files, start, end, seed): #LS: this is where the magic happens I guess
     """Run metcal for `meds_files` only for objects from `start` to `end`.
 
     Note that `start` and `end` follow normal python indexing conventions so
@@ -234,17 +238,21 @@ def _run_mcal_one_chunk(meds_files, start, end, seed):
     try:
         # get the MEDS interface
         for m in meds_files:
-            mfiles.append(NGMixMEDS(m))
-        mbmeds = MultiBandNGMixMEDS(mfiles)
+            mfiles.append(NGMixMEDS(m)) #LS: puts all open meds files in a list
+        mbmeds = MultiBandNGMixMEDS(mfiles) #LS: not sure what a multiband meds is
         cat = mfiles[0].get_cat()
 
         for ind in range(start, end):
             o = mbmeds.get_mbobs(ind)
-            o = _strip_coadd(o)
-            o = _strip_zero_flux(o)
+            #LS: pdb
+            pdb.set_trace()
+            o = _strip_coadd(o) #LS: removes the first image of an object, since that's the coadd I think (and afaik we jointly fit shapes to the single epochs, not the coadd - why?)
+            pdb.set_trace()
+            o = _strip_zero_flux(o) #LS: removes images with zero total flux - when would that happen??
+            pdb.set_trace()
             if not NGMIX_V2:
                 # ngmix v1 worked in surface brightness, not flux
-                o = _apply_pixel_scale(o)
+                o = _apply_pixel_scale(o) #LS: no idea
 
             skip_me = False
             for ol in o:
