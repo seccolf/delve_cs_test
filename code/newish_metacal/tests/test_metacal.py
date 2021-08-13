@@ -3,8 +3,9 @@ import ngmix
 import galsim
 import joblib
 
-from ..metacal import MetacalFitter
-from .._step import CONFIG
+#from ..metacal import MetacalFitter
+from metacal import MetacalFitter
+from _step import CONFIG
 
 SHEARS = ['noshear', '1p', '1m', '2p', '2m']
 
