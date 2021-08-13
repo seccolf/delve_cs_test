@@ -2,7 +2,8 @@ from __future__ import print_function
 import logging
 
 import ngmix
-from ..ngmix_compat import NGMIX_V2
+#from ..ngmix_compat import NGMIX_V2
+from ngmix_compat import NGMIX_V2
 from ngmix.gexceptions import BootPSFFailure
 from ngmix.joint_prior import PriorSimpleSep
 

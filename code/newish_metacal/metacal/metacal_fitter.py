@@ -3,10 +3,12 @@ import logging
 import numpy as np
 import esutil as eu
 
-from ..ngmix_compat import NGMIX_V2
+#from ..ngmix_compat import NGMIX_V2
+from ngmix_compat import NGMIX_V2
 from ngmix import ObsList, MultiBandObsList
 from ngmix.gexceptions import BootPSFFailure, BootGalFailure
-from . import procflags
+#from . import procflags
+import procflags
 
 if NGMIX_V2:
     from ngmix.runners import Runner, PSFRunner
@@ -16,10 +18,10 @@ if NGMIX_V2:
     from ngmix.gaussmom import GaussMom
 else:
     from ngmix.bootstrap import MaxMetacalBootstrapper
-    from .base_fitter import _fit_one_psf
+    from base_fitter import _fit_one_psf
 
-from .base_fitter import FitterBase
-from .util import Namer
+from base_fitter import FitterBase
+from util import Namer
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ import pytest
 import ngmix
 from ngmix import ObsList, Observation, MultiBandObsList
 
-from .._step import (
+from _step import (
     _apply_pixel_scale, _strip_coadd, _strip_zero_flux)
 
 
