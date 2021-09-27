@@ -4,15 +4,6 @@ import numpy as np
 import galsim
 import fitsio
 
-import sys
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/tests')
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal')
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/metacal')
-
-import test_metacal
-
-seed = int(sys.argv[1])
-
 #Functions
 def flux_to_mag(F):
     return -2.5*np.log10(F)+30.0
@@ -92,21 +83,31 @@ def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, verbose=False):
             m['psf'].write(psf, psf_start)
     m.close()
 
+if __name__ == "__main__":
+
+    import sys
+    sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/tests')
+    sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal')
+    sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/metacal')
+
+    import test_metacal
+
+    seed = int(sys.argv[1])
 
 
-input_medsname = r'/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d.fits'%seed
-replace_all_cutouts_by_sims(input_medsname, seed,  0.02, 0.00, verbose=True)
+    input_medsname = r'/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d.fits'%seed
+    replace_all_cutouts_by_sims(input_medsname, seed,  0.02, 0.00, verbose=True)
 
-input_medsname = r'/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d.fits'%seed
-replace_all_cutouts_by_sims(input_medsname, seed, -0.02, 0.00, verbose=True)
+    input_medsname = r'/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d.fits'%seed
+    replace_all_cutouts_by_sims(input_medsname, seed, -0.02, 0.00, verbose=True)
 
-#Generate output files
+    #Generate output files
 
-from _step import _run_metacal as run_metacal
+    from _step import _run_metacal as run_metacal
 
-filename = ['/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d.fits'%seed]
-output = run_metacal(filename, 8)
-fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d_metacal_output.fits'%seed, output, clobber=True)
+    filename = ['/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d.fits'%seed]
+    output = run_metacal(filename, 8)
+    fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d_metacal_output.fits'%seed, output, clobber=True)
 
 filename = ['/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d.fits'%seed]
 output = run_metacal(filename, 8)
