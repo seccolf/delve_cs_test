@@ -109,6 +109,6 @@ if __name__ == "__main__":
     output = run_metacal(filename, 8)
     fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V1/gplus_V%d_metacal_output.fits'%seed, output, clobber=True)
 
-filename = ['/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d.fits'%seed]
-output = run_metacal(filename, 8)
-fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d_metacal_output.fits'%seed, output, clobber=True)
+    filename = ['/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d.fits'%seed]
+    output = run_metacal(filename, 8)
+    fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V1/gminus_V%d_metacal_output.fits'%seed, output, clobber=True)
