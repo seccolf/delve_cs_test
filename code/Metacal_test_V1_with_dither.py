@@ -109,9 +109,9 @@ if __name__ == "__main__":
   from _step import _run_metacal as run_metacal
 
   filename = ['/scratch/midway2/dhayaa/Metacal_test_V%s/gplus_V%d.fits'%(version, seed)]
-  output = run_metacal(filename, 8)
+  output = run_metacal(filename, seed)
   fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V%s/gplus_V%d_metacal_output.fits'%(version, seed), output, clobber=True)
 
   filename = ['/scratch/midway2/dhayaa/Metacal_test_V%s/gminus_V%d.fits'%(version, seed)]
-  output = run_metacal(filename, 8)
+  output = run_metacal(filename, seed)
   fitsio.write('/scratch/midway2/dhayaa/Metacal_test_V%s/gminus_V%d_metacal_output.fits'%(version, seed), output, clobber=True)
