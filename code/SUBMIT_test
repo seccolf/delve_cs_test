@@ -1,0 +1,15 @@
+#!/bin/sh
+#SBATCH --job-name=mcal
+#SBATCH --output=sim_and_mcal.out
+#SBATCH --error=sim_and_mcal.err
+#SBATCH --time=06:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#### SBATCH --ntasks=8 #not necessary if you set ntasks-per-node and nodes
+#SBATCH --exclusive
+#SBATCH --partition=kicp
+#SBATCH --account=kicp
+
+source /home/secco/delve_cs_test/SOURCE_delve_shear
+
+srun run_meds_and_metacal.sh
