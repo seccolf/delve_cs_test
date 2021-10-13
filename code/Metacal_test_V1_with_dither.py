@@ -25,7 +25,7 @@ def make_sim_one_cutout(*, seed, g1, g2, open_meds, obj_ind, cutout):
 
     cutout_row = m[1]['cutout_row'][obj_ind][cutout] + 1
     cutout_col = m[1]['cutout_col'][obj_ind][cutout] + 1
-    dither = dither_rng.uniform(size=2, low=-1, high=1)
+    dither = dither_rng.uniform(size=2, low=-0.5, high=0.5)
     #scale = 0.263 #the size of a DECam pixel in arcsec on the sky
 
     #get WCS:
