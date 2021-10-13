@@ -4,13 +4,6 @@ import numpy as np
 import galsim
 import fitsio
 
-import sys
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/tests')
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal')
-sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/metacal')
-
-import test_metacal
-
 #Functions
 def flux_to_mag(F):
     return -2.5*np.log10(F)+30.0
@@ -93,6 +86,13 @@ def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, verbose=False):
     m.close()
 
 if __name__ == "__main__":
+    
+  import sys
+  sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/tests')
+  sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal')
+  sys.path.insert(0,'/home/dhayaa/Desktop/DECADE/delve_cs_test/code/newish_metacal/metacal')
+
+  import test_metacal
     
   seed = int(sys.argv[1])
   
