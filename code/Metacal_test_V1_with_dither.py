@@ -92,7 +92,7 @@ def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, verbose=False):
             m['psf'].write(psf, psf_start)
     m.close()
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     
   seed = int(sys.argv[1])
   
