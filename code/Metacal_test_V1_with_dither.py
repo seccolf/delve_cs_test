@@ -11,10 +11,9 @@ def flux_to_mag(F):
 def mag_to_flux(m):
     return 10**(-0.4*(m-30))
 
-def make_sim_one_cutout(*, seed, g1, g2, open_meds, obj_ind, cutout):
+def make_sim_one_cutout(noise_rng, dither_rng, g1, g2, open_meds, obj_ind, cutout):
     m = open_meds
-    noise_rng  = np.random.RandomState(seed=seed)
-    dither_rng = np.random.RandomState(seed=seed)
+    
     gal = galsim.Exponential(half_light_radius=0.5).shear(g1=g1, g2=g2) #let's do sheared exponentials again
 
     #fwhm=rng.uniform(low=0.8,high=1.5) #will use a random FWHM for each sim just because
@@ -71,14 +70,17 @@ def make_sim_one_cutout(*, seed, g1, g2, open_meds, obj_ind, cutout):
 
 
 def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, verbose=False):
+    
+    noise_rng  = np.random.RandomState(seed=seed)
+    dither_rng = np.random.RandomState(seed=seed)
+    
     m = fitsio.FITS(input_medsname,mode='rw') #opens the input file
     Nobjects = m[1].get_nrows() #gets number of objects (rows) in the file
     for i_obj in range(Nobjects): #loops over objects in the file
         Ncutout = m[1]['ncutout'][i_obj]
         if verbose and i_obj%1000==0: print("Object %d has %d cutouts to be replaced"%(i_obj,Ncutout))
         for j_cut in range(Ncutout): #loops over cutout in each object in the file
-            im, psf, bmask, im_start, im_end, psf_start, psf_end = make_sim_one_cutout(seed=seed, g1= g1, g2=g2,
-                                                                                       open_meds=m, obj_ind=i_obj, cutout=j_cut)
+            im, psf, bmask, im_start, im_end, psf_start, psf_end = make_sim_one_cutout(noise_rng, dither_rng, g1, g2, m, i_obj, j_cut)
 
             m['image_cutouts'].write(im, im_start)
             m['bmask_cutouts'].write(bmask, im_start)
