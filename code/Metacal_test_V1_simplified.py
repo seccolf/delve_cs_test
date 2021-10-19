@@ -53,7 +53,7 @@ def make_sim_one_cutout(noise_rng, dither_rng, g1, g2, mag, open_meds, obj_ind, 
 
     bmask_im = m['bmask_cutouts'][im_start_row:im_end_row]
     #bmask_im[bmask_im!=2**30] = 0 #setting bmask to zero everywhere it is not 2^30
-    bmask_im = 0 #setting bmask to zero EVERYWHERE
+    bmask_im[:] = 0 #setting bmask to zero EVERYWHERE
 
 
     psf_row = m[1]['psf_row_size'][obj_ind][cutout] #size of the PSF (rows) for each cutout
