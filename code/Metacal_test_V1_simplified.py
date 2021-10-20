@@ -43,11 +43,12 @@ def make_sim_one_cutout(noise_rng, dither_rng, g1, g2, mag, open_meds, obj_ind, 
 
     im_start_row = m[1]['start_row'][obj_ind][cutout]
     im_end_row = im_start_row + dim**2
-    #weight=m[5][im_start_row:im_end_row].reshape(dim,dim) #get the weight of each cutout, will use this to add noise to the simulated image
+    weight_im=m[5][im_start_row:im_end_row].reshape(dim,dim) #get the weight of each cutout, will use this to add noise to the simulated image
     #with np.errstate(divide='ignore', invalid = 'ignore'):
     #    nse=np.sqrt(1.0/weight)
 
     small_noise_scale = mag_to_flux(mag)/1e5 #adding a small amount of noise 
+    weight_im[:] = 1.0/(small_noise_scale**2) #setting the weight image to be 1/Var 
     im += noise_rng.normal(size=im.shape, scale=small_noise_scale)
     #im[weight==0.0]=0.0 #setting the flux to zero where the weight is zero
 
@@ -67,7 +68,7 @@ def make_sim_one_cutout(noise_rng, dither_rng, g1, g2, mag, open_meds, obj_ind, 
     psf_im = psf.drawImage(nx=psf_row, ny=psf_col, wcs=wcs,
                            center=galsim.PositionD(x=psf_center_x, y=psf_center_y)).array
 
-    return im.ravel(), psf_im.ravel(), bmask_im.ravel(), im_start_row, im_end_row, psf_start_row, psf_end_row
+    return im.ravel(), psf_im.ravel(), bmask_im.ravel(), weight_im.ravel(), im_start_row, im_end_row, psf_start_row, psf_end_row
 
 
 def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, mag, verbose=False):
@@ -81,11 +82,12 @@ def replace_all_cutouts_by_sims(input_medsname, seed, g1, g2, mag, verbose=False
         Ncutout = m[1]['ncutout'][i_obj]
         if verbose and i_obj%1000==0: print("Object %d has %d cutouts to be replaced"%(i_obj,Ncutout))
         for j_cut in range(Ncutout): #loops over cutout in each object in the file
-            im, psf, bmask, im_start, im_end, psf_start, psf_end = make_sim_one_cutout(noise_rng, dither_rng, g1, g2, mag, m, i_obj, j_cut)
+            im, psf, bmask, weight, im_start, im_end, psf_start, psf_end = make_sim_one_cutout(noise_rng, dither_rng, g1, g2, mag, m, i_obj, j_cut)
 
             m['image_cutouts'].write(im, im_start)
             m['bmask_cutouts'].write(bmask, im_start)
             m['psf'].write(psf, psf_start)
+            m['weight_cutouts'].write(weight,im_start)
     m.close()
 
 if __name__ == "__main__":
